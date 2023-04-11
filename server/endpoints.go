@@ -5,6 +5,7 @@ type (
 	GetResponse struct {
 		Base64 string
 		Hash   string
+		Empty  int32
 	}
 
 	GetRequest struct {
