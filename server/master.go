@@ -16,7 +16,7 @@ type (
 	GetResponse struct {
 		Base64 string `json:"img_base64"`
 		Hash   string `json:"hash"`
-		Empty  int32  `json:"empty"`
+		Empty  int8   `json:"empty"`
 	}
 
 	GetRequest struct{}
@@ -26,6 +26,7 @@ type (
 type (
 	SolveResponse struct {
 		Status string `json:"status"`
+		Ok     int8   `json:"ok"`
 	}
 
 	SolveRequest struct {
@@ -78,6 +79,7 @@ func SolveMaster(req SolveRequest) SolveResponse {
 
 	return SolveResponse{
 		Status: "ok",
+		Ok:     1,
 	}
 	// mutex unlock.
 }
