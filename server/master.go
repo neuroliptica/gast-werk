@@ -11,41 +11,75 @@ var (
 	Solved   map[string]string
 )
 
-// Goroutine to process /captcha/get requests.
-func GetMaster(master chan *GetRequest) {
-	for req := range master {
-		// mutex lock for Unsolved, Queue and Solved here.
-		if Unsolved.Depth() == 1 {
-			req.Send(GetResponse{
-				Empty: 1,
-			})
-			continue
-		}
-		hash := ExtractLeaves(nil, Unsolved)
-		req.Send(GetResponse{
-			Hash:   hash,
-			Base64: "nothing yet",
-		})
-		Queue[hash] = time.Unix().Now()
-		// mutex unlock.
+// GET /captcha/get endpoint.
+type (
+	GetResponse struct {
+		Base64 string `json:"img_base64"`
+		Hash   string `json:"hash"`
+		Empty  int32  `json:"empty"`
+	}
+
+	GetRequest struct{}
+)
+
+// POST /captcha/solve endpoint.
+type (
+	SolveResponse struct {
+		Status string `json:"status"`
+	}
+
+	SolveRequest struct {
+		Hash  string
+		Value string
+	}
+)
+
+// /captcha/get request constructor.
+func CreateGetRequest() GetRequest {
+	return GetRequest{}
+}
+
+// /captcha/solve request constructor.
+func CreateSolveRequest(hash, value string) SolveRequest {
+	return SolveRequest{
+		Hash:  hash,
+		Value: value,
 	}
 }
 
-// Goroutine to process /captcha/solve requests.
-func SolveMaster(master chan *SolveRequest) {
-	for req := range master {
-		// mutex lock for Queue, Solved and Unsolved here.
-		hash, value := req.Hash, req.Value
-		if _, ok := Queue[hash]; !ok {
-			req.Send(SolveResponse{
-				Status: "error, timed out",
-			})
-			continue
+// Process /captcha/get requests.
+func GetMaster(req GetRequest) GetResponse {
+	// mutex lock for Unsolved, Queue and Solved here.
+	if Unsolved.Depth() == 1 {
+		return GetResponse{
+			Empty: 1,
 		}
-		Solved[hash] = value
-		delete(Queue, hash)
-		// mutex unlock.
 	}
+	hash := ExtractLeaves(nil, Unsolved)
+	Queue[hash] = time.Now()
+	return GetResponse{
+		Hash:   hash,
+		Base64: "nothing yet",
+	}
+	// mutex unlock.
+}
+
+// Goroutine to process /captcha/solve requests.
+func SolveMaster(req SolveRequest) SolveResponse {
+	// mutex lock for Queue, Solved and Unsolved here.
+	hash, value := req.Hash, req.Value
+	if _, ok := Queue[hash]; !ok {
+		return SolveResponse{
+			Status: "error, timed out",
+		}
+	}
+	Solved[hash] = value
+	delete(Queue, hash)
+
+	return SolveResponse{
+		Status: "ok",
+	}
+	// mutex unlock.
 }
 
 // Goroutine for Queue filtering depending on time.
