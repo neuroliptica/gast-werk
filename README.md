@@ -9,27 +9,27 @@
 - GET `/captcha/get`
 
     ```json
-    // Response
+    "Response"
     {
         "img_base64": "base64/data...",
         "hash": "...",
-        "empty": 0 // 1 if no images
+        "empty": 0
     }
     ```
 
 - POST `/captcha/solve`
 
     ```json
-    // Request
+    "Request"
     {
         "hash": "...",
         "value": "..."
     }
 
-    // Response
+    "Response"
     {
         "status": "msg",
-        "ok": 1 // 0 if failed
+        "ok": 1
     }
     ```
 
