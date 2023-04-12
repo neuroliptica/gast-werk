@@ -12,29 +12,32 @@ type Payload interface {
 	GetResponse | SolveResponse | Heartbeat
 }
 
-// Index page default handler.
-func IndexHandler(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/heartbeat", http.StatusFound)
-}
-
 // Response json data.
 func JsonHandler[P Payload](w http.ResponseWriter, payload P) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(payload)
 }
 
-func HeartbeatHandler(w http.ResponseWriter, r *http.Request) {
+// /
+func MainController(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/heartbeat", http.StatusFound)
+}
+
+// /api/get
+func ApiGetController(w http.ResponseWriter, r *http.Request) {
+	resp := GetMaster(CreateGetRequest())
+	JsonHandler(w, resp)
+}
+
+// /heartbeat
+func HeartbeatController(w http.ResponseWriter, r *http.Request) {
 	JsonHandler(w, Heartbeat{
 		Status: "alive",
 	})
 }
 
-func CaptchaGetHandler(w http.ResponseWriter, r *http.Request) {
-	resp := GetMaster(CreateGetRequest())
-	JsonHandler(w, resp)
-}
-
-func CaptchaSolveHandler(w http.ResponseWriter, r *http.Request) {
+// /api/solve
+func ApiSolveController(w http.ResponseWriter, r *http.Request) {
 	header := r.Header.Get("Content-Type")
 	if header != "application/json" {
 		JsonHandler(w, SolveResponse{

@@ -6,10 +6,10 @@ import (
 )
 
 func Route(address string) {
-	http.HandleFunc("/", IndexHandler)
-	http.HandleFunc("/heartbeat", HeartbeatHandler)
-	http.HandleFunc("/captcha/get", CaptchaGetHandler)
-	http.HandleFunc("/captcha/solve", CaptchaSolveHandler)
+	http.HandleFunc("/", MainController)
+	http.HandleFunc("/heartbeat", HeartbeatController)
+	http.HandleFunc("/api/get", ApiGetController)
+	http.HandleFunc("/api/solve", ApiSolveController)
 
 	log.Fatal(http.ListenAndServe(address, nil))
 }
