@@ -5,6 +5,34 @@
 
 ![arch](https://imgur.com/5xmsKdB.jpg)
 
+## API
+- GET `/captcha/get`
+
+    ```json
+    // Response
+    {
+        "img_base64": "base64/data...",
+        "hash": "...",
+        "empty": 0 // 1 if no images
+    }
+    ```
+
+- POST `/captcha/solve`
+
+    ```json
+    // Request
+    {
+        "hash": "...",
+        "value": "..."
+    }
+
+    // Response
+    {
+        "status": "msg",
+        "ok": 1 // 0 if failed
+    }
+    ```
+
 ## Собрать
 ###### Go >= 1.18
 ```bash
