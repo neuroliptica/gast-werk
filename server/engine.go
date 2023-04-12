@@ -31,9 +31,9 @@ func Run(address string) {
 
 	// /captcha/get
 
-	//	http.HandleFunc("/", AuthHandler)
-	//	http.HandleFunc("/captcha/get", GetHandler)
-	//	http.HandleFunc("/captcha/solve", PostHandler)
+	http.HandleFunc("/", IndexHandler)
+	http.HandleFunc("/captcha/get", CaptchaGetHandler)
+	http.HandleFunc("/captcha/solve", CaptchaSolveHandler)
 
 	log.Fatal(http.ListenAndServe(address, nil))
 }
