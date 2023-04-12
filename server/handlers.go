@@ -9,18 +9,24 @@ import (
 
 // Generic type for json payload.
 type Payload interface {
-	GetResponse | SolveResponse
+	GetResponse | SolveResponse | Heartbeat
 }
 
 // Index page default handler.
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/captcha/get", http.StatusFound)
+	http.Redirect(w, r, "/heartbeat", http.StatusFound)
 }
 
 // Response json data.
 func JsonHandler[P Payload](w http.ResponseWriter, payload P) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(payload)
+}
+
+func HeartbeatHandler(w http.ResponseWriter, r *http.Request) {
+	JsonHandler(w, Heartbeat{
+		Status: "alive",
+	})
 }
 
 func CaptchaGetHandler(w http.ResponseWriter, r *http.Request) {

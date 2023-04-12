@@ -11,6 +11,11 @@ var (
 	Solved   map[string]string
 )
 
+// GET /heartbeat endpoint
+type Heartbeat struct {
+	Status string `json:"status"`
+}
+
 // GET /captcha/get endpoint.
 type (
 	GetResponse struct {

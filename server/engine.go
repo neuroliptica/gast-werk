@@ -32,6 +32,7 @@ func Run(address string) {
 	// /captcha/get
 
 	http.HandleFunc("/", IndexHandler)
+	http.HandleFunc("/heartbeat", HeartbeatHandler)
 	http.HandleFunc("/captcha/get", CaptchaGetHandler)
 	http.HandleFunc("/captcha/solve", CaptchaSolveHandler)
 
