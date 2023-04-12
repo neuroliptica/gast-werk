@@ -1,6 +1,6 @@
 package server
 
-// POST /api/solve endpoint.
+// POST /api/solve schema.
 type (
 	SolveResponse struct {
 		Status string `json:"status"`

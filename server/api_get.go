@@ -2,7 +2,7 @@ package server
 
 import "time"
 
-// GET /api/get endpoint.
+// GET /api/get schema.
 type (
 	GetResponse struct {
 		Base64 string `json:"img_base64"`
