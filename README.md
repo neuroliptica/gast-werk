@@ -6,7 +6,7 @@
 ![arch](https://imgur.com/5xmsKdB.jpg)
 
 ## API
-- GET `/captcha/get`
+- GET `/api/get`
 
     ```json
     "Response"
@@ -17,7 +17,7 @@
     }
     ```
 
-- POST `/captcha/solve`
+- POST `/api/solve`
 
     ```json
     "Request"
