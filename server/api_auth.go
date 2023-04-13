@@ -83,7 +83,7 @@ func (req AuthRequest) SetToken(tokens *Tokens) string {
 
 // Thread safe model to process /api/auth requests.
 func AuthMaster(req AuthRequest) AuthResponse {
-	return Locker[AuthResponse](&TokensSync, func() AuthResponse {
+	return Locker(&TokensSync, func() AuthResponse {
 		if !LocalTable.ValidUser(req.Data) {
 			return AuthResponse{
 				Error: ErrorBody{

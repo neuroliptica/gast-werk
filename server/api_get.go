@@ -20,7 +20,7 @@ func CreateGetRequest() GetRequest {
 
 // Thread safe model to process /api/get requests.
 func GetMaster(req GetRequest) GetResponse {
-	return Locker[GetResponse](&DataSync, func() GetResponse {
+	return Locker(&DataSync, func() GetResponse {
 		if Unsolved.Depth() == 1 {
 			return GetResponse{
 				Empty: 1,
