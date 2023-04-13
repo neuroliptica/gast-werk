@@ -23,20 +23,19 @@ func CreateSolveRequest(hash, value string) SolveRequest {
 
 // Model to process /api/solve requests.
 func SolveMaster(req SolveRequest) SolveResponse {
-	DataSync.Lock()
-	defer DataSync.Unlock()
-
-	hash, value := req.Hash, req.Value
-	if _, ok := Queue[hash]; !ok {
-		return SolveResponse{
-			Status: "error, timed out",
+	return Locker(&DataSync, func() SolveResponse {
+		hash, value := req.Hash, req.Value
+		if _, ok := Queue[hash]; !ok {
+			return SolveResponse{
+				Status: "error, timed out",
+			}
 		}
-	}
-	Solved[hash] = value
-	delete(Queue, hash)
+		Solved[hash] = value
+		delete(Queue, hash)
 
-	return SolveResponse{
-		Status: "ok",
-		Ok:     1,
-	}
+		return SolveResponse{
+			Status: "ok",
+			Ok:     1,
+		}
+	})
 }
