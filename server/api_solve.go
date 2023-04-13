@@ -23,7 +23,9 @@ func CreateSolveRequest(hash, value string) SolveRequest {
 
 // Model to process /api/solve requests.
 func SolveMaster(req SolveRequest) SolveResponse {
-	// mutex lock for Queue, Solved and Unsolved here.
+	DataSync.Lock()
+	defer DataSync.Unlock()
+
 	hash, value := req.Hash, req.Value
 	if _, ok := Queue[hash]; !ok {
 		return SolveResponse{
@@ -37,5 +39,4 @@ func SolveMaster(req SolveRequest) SolveResponse {
 		Status: "ok",
 		Ok:     1,
 	}
-	// mutex unlock.
 }

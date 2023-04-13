@@ -1,5 +1,7 @@
 package server
 
+import "sync"
+
 // TODO: should use a csrf tokens instead of this.
 
 type UserData struct {
@@ -50,7 +52,10 @@ func (t *Tokens) ValidUser(user UserData) bool {
 	return ok
 }
 
-var LocalTable = MakeTokensTable()
+var (
+	LocalTable = MakeTokensTable()
+	TokensSync sync.Mutex
+)
 
 // POST /api/auth schema.
 type (
@@ -76,18 +81,20 @@ func (req AuthRequest) SetToken(tokens *Tokens) string {
 	return token
 }
 
-// Model to process /api/auth requests.
+// Thread safe model to process /api/auth requests.
 func AuthMaster(req AuthRequest) AuthResponse {
-	if !LocalTable.ValidUser(req.Data) {
-		return AuthResponse{
-			Error: ErrorBody{
-				Failed: true,
-				Reason: "user does not exist",
-			},
+	return Locker[AuthResponse](&TokensSync, func() AuthResponse {
+		if !LocalTable.ValidUser(req.Data) {
+			return AuthResponse{
+				Error: ErrorBody{
+					Failed: true,
+					Reason: "user does not exist",
+				},
+			}
 		}
-	}
-	token := req.SetToken(&LocalTable)
-	return AuthResponse{
-		Token: token,
-	}
+		token := req.SetToken(&LocalTable)
+		return AuthResponse{
+			Token: token,
+		}
+	})
 }

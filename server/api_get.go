@@ -18,19 +18,19 @@ func CreateGetRequest() GetRequest {
 	return GetRequest{}
 }
 
-// Model to process /api/get requests.
+// Thread safe model to process /api/get requests.
 func GetMaster(req GetRequest) GetResponse {
-	// mutex lock for Unsolved, Queue and Solved here.
-	if Unsolved.Depth() == 1 {
-		return GetResponse{
-			Empty: 1,
+	return Locker[GetResponse](&DataSync, func() GetResponse {
+		if Unsolved.Depth() == 1 {
+			return GetResponse{
+				Empty: 1,
+			}
 		}
-	}
-	hash := ExtractLeaves(nil, Unsolved)
-	Queue[hash] = time.Now()
-	return GetResponse{
-		Hash:   hash,
-		Base64: "nothing yet",
-	}
-	// mutex unlock.
+		hash := ExtractLeaves(nil, Unsolved)
+		Queue[hash] = time.Now()
+		return GetResponse{
+			Hash:   hash,
+			Base64: "nothing yet",
+		}
+	})
 }
