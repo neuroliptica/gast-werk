@@ -11,6 +11,7 @@ func Route(address string) {
 	http.HandleFunc("/api/get", ApiGetController)
 	http.HandleFunc("/api/solve", ApiSolveController)
 	http.HandleFunc("/api/auth", ApiAuthController)
+	http.HandleFunc("/api/add", ApiAddController)
 
 	go Checker()
 
