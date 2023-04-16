@@ -18,7 +18,7 @@ func MakeHash() string { return "ololo" }
 
 // Thread safe model to process /api/add rquests.
 func AddMaster(req AddRequest) AddResponse {
-	if ValidToken(req.Token) {
+	if !ValidToken(req.Token) {
 		return AddResponse{
 			Error: MakeErrorBody("unathorized, invalid token"),
 		}
