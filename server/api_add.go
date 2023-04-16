@@ -18,15 +18,9 @@ func MakeHash() string { return "ololo" }
 
 // Thread safe model to process /api/add rquests.
 func AddMaster(req AddRequest) AddResponse {
-	valid := Locker(&TokensSync, func() bool {
-		return LocalTable.ValidToken(req.Token)
-	})
-	if !valid {
+	if ValidToken(req.Token) {
 		return AddResponse{
-			Error: ErrorBody{
-				Failed: true,
-				Reason: "unauthorized, invalid token",
-			},
+			Error: MakeErrorBody("unathorized, invalid token"),
 		}
 	}
 	return Locker(&DataSync, func() AddResponse {

@@ -71,6 +71,13 @@ type (
 	}
 )
 
+// Valid token in table.
+func ValidToken(token string) bool {
+	return Locker(&TokensSync, func() bool {
+		return LocalTable.ValidToken(token)
+	})
+}
+
 // Set auth token for nickname-password pair.
 func (req AuthRequest) SetToken(tokens *Tokens) string {
 	token := "token"
@@ -83,10 +90,7 @@ func AuthMaster(req AuthRequest) AuthResponse {
 	return Locker(&TokensSync, func() AuthResponse {
 		if !LocalTable.ValidUser(req.Data) {
 			return AuthResponse{
-				Error: ErrorBody{
-					Failed: true,
-					Reason: "user does not exist",
-				},
+				Error: MakeErrorBody("user dosn't exist"),
 			}
 		}
 		token := req.SetToken(&LocalTable)

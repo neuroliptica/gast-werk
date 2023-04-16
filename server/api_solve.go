@@ -28,10 +28,7 @@ func SolveMaster(req SolveRequest) SolveResponse {
 		if _, ok := Queue[hash]; !ok {
 			return SolveResponse{
 				Status: "failed",
-				Error: ErrorBody{
-					Failed: true,
-					Reason: "hash is not in queue, timed out",
-				},
+				Error:  MakeErrorBody("hash is not in queue, timed out"),
 			}
 		}
 		Solved[hash] = value
