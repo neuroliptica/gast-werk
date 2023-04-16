@@ -17,10 +17,12 @@ type Tokens struct {
 
 // Tokens table constructor.
 func MakeTokensTable() Tokens {
-	return Tokens{
+	tk := Tokens{
 		UserTokens:  make(map[UserData]string),
 		ValidTokens: make(map[string]any),
 	}
+	tk.AddToken(UserData{"123", "123"}, "test")
+	return tk
 }
 
 // Add token to all tables.
@@ -59,11 +61,6 @@ var (
 
 // POST /api/auth schema.
 type (
-	ErrorBody struct {
-		Failed bool   `json:"failed"`
-		Reason string `json:"reason"`
-	}
-
 	AuthResponse struct {
 		Token string    `json:"token"`
 		Error ErrorBody `json:"error"`

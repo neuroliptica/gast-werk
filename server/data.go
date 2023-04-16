@@ -8,8 +8,8 @@ import (
 
 var (
 	Unsolved = &Tree{Hash: "root"}
-	Queue    map[string]time.Time
-	Solved   map[string]string
+	Queue    = make(map[string]time.Time)
+	Solved   = make(map[string]string)
 
 	// Whenever unsolved, queue or solved is accessed, lock this one.
 	DataSync sync.Mutex

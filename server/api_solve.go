@@ -3,8 +3,8 @@ package server
 // POST /api/solve schema.
 type (
 	SolveResponse struct {
-		Status string `json:"status"`
-		Ok     int8   `json:"ok"`
+		Status string    `json:"status"`
+		Error  ErrorBody `json:"error"`
 	}
 
 	SolveRequest struct {
@@ -27,15 +27,17 @@ func SolveMaster(req SolveRequest) SolveResponse {
 		hash, value := req.Hash, req.Value
 		if _, ok := Queue[hash]; !ok {
 			return SolveResponse{
-				Status: "error, timed out",
+				Status: "failed",
+				Error: ErrorBody{
+					Failed: true,
+					Reason: "hash is not in queue, timed out",
+				},
 			}
 		}
 		Solved[hash] = value
 		delete(Queue, hash)
-
 		return SolveResponse{
-			Status: "ok",
-			Ok:     1,
+			Status: "ok, solved",
 		}
 	})
 }
