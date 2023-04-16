@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"sync"
 	"time"
 )
@@ -25,7 +26,7 @@ var (
 //	func UnsafeG(y1) g1 { ... another access to GlobalTable ... }
 //
 //	Controllers should never call UnsafeG and UnsafeF directly.
-//	Instead, it should be used with as a clojure-callback to genric Locker:
+//	Instead, it should be used with as a closure-callback to genric Locker:
 //
 //	func SafeF(x1, x2) f1 {
 //		return Locker[f1](&TableSync, func() f1 {
@@ -49,7 +50,17 @@ func Locker[ReturnT any](mu *sync.Mutex, callback Closure[ReturnT]) ReturnT {
 
 // Thread safe queue aborted checker.
 func Checker() {
-	Locker[struct{}](&DataSync, func() struct{} {
-		return struct{}{}
-	})
+	for {
+		fmt.Printf("running checker... %d will be checked.\n", len(Queue))
+		for hash, value := range Queue {
+			if time.Since(value).Minutes() >= 1.0 {
+				Locker(&DataSync, func() struct{} {
+					delete(Queue, hash)
+					Unsolved.Add(hash)
+					return struct{}{}
+				})
+			}
+		}
+		time.Sleep(30 * time.Second)
+	}
 }

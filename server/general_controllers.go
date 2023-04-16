@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-// Generic type for json payload.
+// Generic constraint for json payload.
 type Payload interface {
 	// GetResponse | SolveResponse | Heartbeat | AuthResponse
 }

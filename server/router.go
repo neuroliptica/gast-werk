@@ -12,5 +12,7 @@ func Route(address string) {
 	http.HandleFunc("/api/solve", ApiSolveController)
 	http.HandleFunc("/api/auth", ApiAuthController)
 
+	go Checker()
+
 	log.Fatal(http.ListenAndServe(address, nil))
 }
