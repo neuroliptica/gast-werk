@@ -11,25 +11,6 @@ type Payload interface {
 	// GetResponse | SolveResponse | Heartbeat | AuthResponse
 }
 
-// General error body schema.
-type ErrorBody struct {
-	Failed bool   `json:"failed"`
-	Reason string `json:"reason"`
-}
-
-// General error response schema.
-type ErrorResponse struct {
-	Error ErrorBody `json:"error"`
-}
-
-// Instance ErrorBody struct with provided message.
-func MakeErrorWithReason(reason string) ErrorBody {
-	return ErrorBody{
-		Failed: true,
-		Reason: reason,
-	}
-}
-
 // Response json data.
 func JsonController[P Payload](w http.ResponseWriter, payload P) {
 	w.Header().Set("Content-Type", "application/json")

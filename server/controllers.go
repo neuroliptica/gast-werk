@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
 )
 
@@ -13,23 +12,17 @@ func MainController(w http.ResponseWriter, r *http.Request) {
 // /api/add
 func ApiAddController(w http.ResponseWriter, r *http.Request) {
 	if !ApplicationJson(r) {
-		JsonController(w, ErrorResponse{
-			Error: MakeErrorWithReason("content-type should be application/json"),
-		})
+		JsonController(w, InvalidContentType())
 		return
 	}
 	var addBody AddRequest
 	err := ReadJsonBody(r, &addBody)
 	if err != nil {
-		JsonController(w, ErrorResponse{
-			Error: MakeErrorWithReason(fmt.Sprintf("%v", err)),
-		})
+		JsonController(w, InternalError(err))
 		return
 	}
 	if addBody.Token == "" || addBody.Base64 == "" {
-		JsonController(w, ErrorResponse{
-			Error: MakeErrorWithReason("invalid data provided"),
-		})
+		JsonController(w, InvalidData())
 		return
 	}
 	JsonController(w, AddMaster(addBody))
@@ -38,23 +31,17 @@ func ApiAddController(w http.ResponseWriter, r *http.Request) {
 // /api/auth
 func ApiAuthController(w http.ResponseWriter, r *http.Request) {
 	if !ApplicationJson(r) {
-		JsonController(w, ErrorResponse{
-			Error: MakeErrorWithReason("content-type should be application/json"),
-		})
+		JsonController(w, InvalidContentType())
 		return
 	}
 	var authBody AuthRequest
 	err := ReadJsonBody(r, &authBody)
 	if err != nil {
-		JsonController(w, ErrorResponse{
-			Error: MakeErrorWithReason(fmt.Sprintf("%v", err)),
-		})
+		JsonController(w, InternalError(err))
 		return
 	}
 	if authBody.Data.Nickname == "" || authBody.Data.Password == "" {
-		JsonController(w, ErrorResponse{
-			Error: MakeErrorWithReason("invalid data provided"),
-		})
+		JsonController(w, InvalidData())
 		return
 	}
 	JsonController(w, AuthMaster(authBody))
@@ -76,23 +63,17 @@ func HeartbeatController(w http.ResponseWriter, r *http.Request) {
 // /api/solve
 func ApiSolveController(w http.ResponseWriter, r *http.Request) {
 	if !ApplicationJson(r) {
-		JsonController(w, ErrorResponse{
-			Error: MakeErrorWithReason("content-type should be application/json"),
-		})
+		JsonController(w, InvalidContentType())
 		return
 	}
 	var solveBody SolveRequest
 	err := ReadJsonBody(r, &solveBody)
 	if err != nil {
-		JsonController(w, ErrorResponse{
-			Error: MakeErrorWithReason(fmt.Sprintf("error, %v", err)),
-		})
+		JsonController(w, InternalError(err))
 		return
 	}
 	if solveBody.Hash == "" || solveBody.Value == "" {
-		JsonController(w, ErrorResponse{
-			Error: MakeErrorWithReason("invalid data provided"),
-		})
+		JsonController(w, InvalidData())
 	}
 	JsonController(w, SolveMaster(solveBody))
 }
