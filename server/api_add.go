@@ -3,13 +3,13 @@ package server
 // POST /api/add schema.
 type (
 	AddResponse struct {
-		Hash  string    `json:"hash"`
-		Error ErrorBody `json:"error"`
+		Hashes []string  `json:"hash"`
+		Error  ErrorBody `json:"error"`
 	}
 
 	AddRequest struct {
-		Base64 string `json:"img_base64"`
-		Token  string `json:"token"`
+		Data  []string `json:"data"`
+		Token string   `json:"token"`
 	}
 )
 
@@ -24,10 +24,15 @@ func AddMaster(req AddRequest) AddResponse {
 		}
 	}
 	return Locker(&DataSync, func() AddResponse {
-		hash := MakeHash()
-		Unsolved.Add(hash) // also add base64 image somewhere
+		hashes := make([]string, 0)
+		for i := range req.Data {
+			hash := MakeHash()
+			hashes = append(hashes, hash)
+			Total[hash] = req.Data[i]
+			Unsolved.Add(hash)
+		}
 		return AddResponse{
-			Hash: hash,
+			Hashes: hashes,
 		}
 	})
 }
