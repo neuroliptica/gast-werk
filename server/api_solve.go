@@ -13,14 +13,6 @@ type (
 	}
 )
 
-// /api/solve request constructor.
-func CreateSolveRequest(hash, value string) SolveRequest {
-	return SolveRequest{
-		Hash:  hash,
-		Value: value,
-	}
-}
-
 // Model to process /api/solve requests.
 func SolveMaster(req SolveRequest) SolveResponse {
 	return Locker(&DataSync, func() SolveResponse {
