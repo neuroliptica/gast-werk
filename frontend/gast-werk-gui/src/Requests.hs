@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE NoMonomorphismRestriction #-}
 
 -- | Requests.hs: provide geenral api for interacting through requests.
 module Requests 
@@ -8,20 +9,22 @@ module Requests
 
 import Data.Aeson
 import Network.HTTP.Simple
+import Control.Logging as Log
+import Data.Text as T
+import Data.ByteString.Lazy as LBS
 
 -- | General HTTP POST with json request and response body.
-jsonPost :: (ToJSON req, FromJSON resp) => String -> req -> IO resp
-jsonPost url body = do
-    initReq <- parseRequest ("POST " <> url)
-    let request = setRequestBodyJSON body initReq
-    response <- httpJSON request :: (FromJSON resp) => IO (Response resp)
+jsonPost :: ToJSON req => String -> req -> IO LBS.ByteString
+jsonPost url body = Log.withStdoutLogging $ do
+    Log.logS "POST" $ T.pack url
+    request <- setRequestBodyJSON body <$> parseRequest ("POST " <> url)
+    response <- httpLBS request
     return $ getResponseBody response
 
 -- | General HTTP GET with json response body.
-jsonGet :: (FromJSON resp) => String -> IO resp
+jsonGet :: String -> IO LBS.ByteString
 jsonGet url = do
-    initReq <- parseRequest url
-    response <- httpJSON initReq :: (FromJSON resp) => IO (Response resp)
-    return $ getResponseBody response
-
+    Log.logS "GET" $ T.pack url
+    response <- httpLBS <$> parseRequest url
+    getResponseBody <$> response
 

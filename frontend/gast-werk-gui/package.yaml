@@ -25,6 +25,7 @@ dependencies:
 - directory
 - http-conduit
 - aeson
+- bytestring
 
 ghc-options:
 - -Wall
