@@ -9,6 +9,25 @@ func MainController(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/heartbeat", http.StatusFound)
 }
 
+// /api/stats
+func ApiStatsController(w http.ResponseWriter, r *http.Request) {
+	if !ApplicationJson(r) {
+		JsonController(w, InvalidContentType())
+		return
+	}
+	var statsBody StatsRequest
+	err := ReadJsonBody(r, &statsBody)
+	if err != nil {
+		JsonController(w, InternalError(err))
+		return
+	}
+	if statsBody.Token == "" {
+		JsonController(w, InvalidData())
+		return
+	}
+	JsonController(w, StatsMaster(statsBody))
+}
+
 // /api/add
 func ApiAddController(w http.ResponseWriter, r *http.Request) {
 	if !ApplicationJson(r) {

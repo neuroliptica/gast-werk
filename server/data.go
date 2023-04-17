@@ -7,6 +7,7 @@ import (
 )
 
 var (
+	Total    = make(map[string]string)
 	Unsolved = &Tree{Hash: "root"}
 	Queue    = make(map[string]time.Time)
 	Solved   = make(map[string]string)
@@ -54,11 +55,10 @@ func Checker() {
 		fmt.Printf("running checker... %d will be checked.\n", len(Queue))
 		for hash, value := range Queue {
 			if time.Since(value).Minutes() >= 1.0 {
-				Locker(&DataSync, func() struct{} {
-					delete(Queue, hash)
-					Unsolved.Add(hash)
-					return struct{}{}
-				})
+				DataSync.Lock()
+				delete(Queue, hash)
+				Unsolved.Add(hash)
+				DataSync.Unlock()
 			}
 		}
 		time.Sleep(30 * time.Second)
