@@ -37,6 +37,9 @@ ghc-options:
 - -Wmissing-home-modules
 - -Wpartial-fields
 - -Wredundant-constraints
+- -Wno-unused-do-bind
+- -Wno-unused-imports
+- -Wno-missing-home-modules
 
 library:
   source-dirs: src
