@@ -2,6 +2,7 @@
 
 module Logger
   ( logBoth
+  , writeInBuffer
   ) where
 
 import Control.Logging as Log
