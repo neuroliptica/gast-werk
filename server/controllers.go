@@ -40,7 +40,7 @@ func ApiAddController(w http.ResponseWriter, r *http.Request) {
 		JsonController(w, InternalError(err))
 		return
 	}
-	if addBody.Token == "" || addBody.Base64 == "" {
+	if addBody.Token == "" || len(addBody.Data) == 0 {
 		JsonController(w, InvalidData())
 		return
 	}

@@ -52,15 +52,15 @@ func Locker[ReturnT any](mu *sync.Mutex, callback Closure[ReturnT]) ReturnT {
 // Thread safe queue aborted checker.
 func Checker() {
 	for {
+		DataSync.Lock()
 		fmt.Printf("running checker... %d will be checked.\n", len(Queue))
 		for hash, value := range Queue {
 			if time.Since(value).Minutes() >= 1.0 {
-				DataSync.Lock()
 				delete(Queue, hash)
 				Unsolved.Add(hash)
-				DataSync.Unlock()
 			}
 		}
+		DataSync.Unlock()
 		time.Sleep(30 * time.Second)
 	}
 }
